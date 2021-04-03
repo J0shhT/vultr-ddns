@@ -13,6 +13,13 @@
 #include <memory>
 
 /**
+ * Dependency Libraries
+ */
+#include <httplib.h>
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
+/**
  * Build types
  */
 #if defined(_DEBUG) || !defined(NDEBUG)
@@ -41,6 +48,7 @@
  * Platform-specific includes
  */
 #ifdef PLATFORM_WINDOWS
+	#define WIN32_LEAN_AND_MEAN
 	#include "Platform/WindowsPlatform.h"
 #else
 	#error Unsupported platform
