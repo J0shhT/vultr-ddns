@@ -1,7 +1,7 @@
 {
 	"apiKey": "",
 	"domainName": "example.com",
-	"targetRecordName": "ddns",
-	"updateInterval": 3600,
-	"hideByDefault": false
+	"recordType": "A",
+	"recordName": "ddns",
+	"recordTTL": 300
 }

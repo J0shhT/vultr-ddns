@@ -1,61 +1,30 @@
 #ifdef PLATFORM_WINDOWS
 
 #include <Platform/Windows/WindowsApplication.h>
-
-#include <iostream>
+#include <Core/Exceptions.h>
 
 using namespace VULTR_DDNS;
 
-WindowsApplication::WindowsApplication(DisplayMode mode)
-	: Application(mode), m_IsInitialized(false)
+WindowsApplication::WindowsApplication()
 {
-	init(mode);
 }
 
-WindowsApplication::~WindowsApplication()
+bool WindowsApplication::Initialize()
 {
-	if (m_DisplayMode == DisplayMode::Console && m_IsInitialized)
-		FreeConsole();
-}
-
-void WindowsApplication::init(DisplayMode mode)
-{
-	switch (mode)
+	try
 	{
-		case DisplayMode::Console:
-			initConsole();
-			break;
-		case DisplayMode::Background:
-			break;
-		default:
-			assert(false);
-			break;
+		return Application::Initialize();
+	}
+	catch (const initialization_error& e)
+	{
+		const char* const message = e.what();
+		println("ERROR: %s", message);
+		return false;
 	}
 }
 
-void WindowsApplication::initConsole()
+void WindowsApplication::Shutdown()
 {
-	if (AllocConsole() == 0)
-	{
-		bool consoleAllocSuccess = FreeConsole() != 0 && AllocConsole() != 0;
-		assert(consoleAllocSuccess);
-	}
-	
-	FILE* pIoFile;
-    freopen_s(&pIoFile, "CONOUT$", "w", stdout);
-    freopen_s(&pIoFile, "CONOUT$", "w", stderr);
-    freopen_s(&pIoFile, "CONIN$", "r", stdin);
-	std::cout.clear();
-    std::clog.clear();
-    std::cerr.clear();
-    std::cin.clear();
-
-	m_IsInitialized = true;
-}
-
-std::shared_ptr<Application> VULTR_DDNS::CreateApplication(DisplayMode mode)
-{
-	return std::make_shared<WindowsApplication>(mode);
 }
 
 #endif

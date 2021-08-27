@@ -10,6 +10,7 @@
 /**
  * C++ Standard Template Library
  */
+#include <exception>
 #include <memory>
 
 /**
@@ -18,6 +19,12 @@
 #include <httplib.h>
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
+
+/**
+ * Boost Library
+ */
+#include <boost/filesystem.hpp>
+#include <boost/program_options.hpp>
 
 /**
  * Build types

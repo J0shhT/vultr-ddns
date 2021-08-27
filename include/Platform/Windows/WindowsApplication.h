@@ -9,15 +9,12 @@ namespace VULTR_DDNS
 	class WindowsApplication : public Application
 	{
 	public:
-		WindowsApplication(DisplayMode mode);
-		virtual ~WindowsApplication();
-
-	protected:
-		virtual void init(DisplayMode mode) override;
-		virtual void initConsole();
+		WindowsApplication();
+		virtual ~WindowsApplication() = default;
 	
-	protected:
-		bool m_IsInitialized;
+	public:
+		bool Initialize() override;
+		void Shutdown() override;
 	};
 }
 

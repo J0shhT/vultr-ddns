@@ -5,43 +5,39 @@
 
 using namespace VultrDDNS;
 
-int main(int argc, wchar_t** argv)
+#ifdef PLATFORM_WINDOWS
+
+int main(int argc, char** argv)
 {
-	auto app = CreateApplication(DisplayMode::Console);
-
-	httplib::Client http("http://api.ipify.org");
-	auto res = http.Get("/").value();
-	app->println("External IP: %s", res.body.c_str());
-
-	std::ifstream configFile("config.json");
-	if (configFile.good())
+	WindowsApplication app;
+	if (!app.ParseArguments(argc, argv))
 	{
-		json config;
-		configFile >> config;
-		if (config.contains("domainName"))
-		{
-			std::string domainName = config.at("domainName");
-			app->println("config.domainName = %s", domainName.c_str());
-		}
+		//app.WaitForUser();
+		return 0;
+	}
+
+	if (!app.Initialize())
+	{
+		app.WaitForUser();
+		return 1;
+	}
+
+	httplib::Client http("https://api.ipify.org");
+	http.set_ca_cert_path(app.GetAbsolutePath("/cacert.pem").c_str());
+	http.enable_server_certificate_verification(true);
+	auto res = http.Get("/");
+	if (res.error() == httplib::Error::Success)
+	{
+		app.println("Public IP address: %s", res.value().body.c_str());
 	}
 	else
 	{
-		app->println("Failed to open config.json");
+		app.println("Failed to fetch public IP address with error code: %d", res.error());
 	}
-	configFile.close();
 
-	printf("Press enter to exit...");
-	getchar();
+	app.WaitForUser();
+	app.Shutdown();
 	return 0;
-}
-
-#ifdef PLATFORM_WINDOWS
-
-INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine, int cmdShow)
-{
-	int argc = 0;
-	PWSTR* argv = CommandLineToArgvW(GetCommandLine(), &argc);
-	return main(argc, argv);
 }
 
 #endif

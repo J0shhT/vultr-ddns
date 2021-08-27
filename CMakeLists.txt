@@ -8,15 +8,15 @@ file(GLOB_RECURSE ${PROJECT_SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 #file(GLOB_RECURSE ${PROJECT_HEADERS} ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
 
 # nlohmann_json library dependency
-set(JSON_BuildTests OFF CACHE INTERNAL "")
-set(JSON_Install OFF CACHE INTERNAL "")
 add_subdirectory(nlohmann_json)
 
 # httplib library dependecy
+set(HTTPLIB_REQUIRE_OPENSSL ON)
+set(OPENSSL_USE_STATIC_LIBS ON)
 add_subdirectory(cpp-httplib)
 
 # vultrddns executable
-add_executable(${PROJECT_NAME} WIN32)
+add_executable(${PROJECT_NAME})
 
 # Preprocessor definitions
 add_compile_definitions(_UNICODE UNICODE)
@@ -31,12 +31,19 @@ target_sources(${PROJECT_NAME}
 target_include_directories(${PROJECT_NAME}
 	PUBLIC
 		"${CMAKE_CURRENT_SOURCE_DIR}/include"
+		"$ENV{BOOST_INCLUDE_DIR}"
 )
 
 # Target pre-compiled header
 target_precompile_headers(${PROJECT_NAME}
 	PRIVATE
 		<Common.hpp>
+)
+
+# Target library directories
+target_link_directories(${PROJECT_NAME}
+	PUBLIC
+		"$ENV{BOOST_LIBRARIES}"
 )
 
 # Target libraries
